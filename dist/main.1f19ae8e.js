@@ -11307,51 +11307,54 @@ var m = {
 var v = {
   el: null,
   html: "\n        <div>\n        <div class=\"output\"><span id=\"number\">{{n}}</span></div>\n        <div class=\"actions\">\n            <button id=\"add1\">+1</button>\n            <button id=\"minus1\">-1</button>\n            <button id=\"mul2\">*2</button>\n            <button id=\"divide2\">/2</button>\n        </div>\n        </div>\n",
-  update: function update() {
-    c.ui.number.text(m.data.n || 100);
+  init: function init(container) {
+    v.el = (0, _jquery.default)(container);
+    v.render();
   },
-  render: function render(container) {
-    if (v.el === null) {
-      v.el = (0, _jquery.default)(v.html.replace("{{n}}", m.data.n)).appendTo((0, _jquery.default)(container));
-    } else {
-      var newEl = (0, _jquery.default)(v.html.replace('{{n}}', m.data.n));
-      v.el.replaceWith(newEl);
-      v.el = newEl;
+  render: function render(n) {
+    if (v.el.children.length !== 0) {
+      v.el.empty();
+      (0, _jquery.default)(v.html.replace("{{n}}", n)).appendTo(v.el);
     }
   }
 };
 var c = {
   init: function init(container) {
-    v.render(container);
-    c.ui = {
-      button1: (0, _jquery.default)("#add1"),
-      button2: (0, _jquery.default)("#minus1"),
-      button3: (0, _jquery.default)("#mul2"),
-      button4: (0, _jquery.default)("#divide2"),
-      number: (0, _jquery.default)("#number")
-    };
-    c.bindEvent();
+    v.init(container);
+    c.autoBindEvent();
   },
-  bindEvent: function bindEvent() {
-    c.ui.button1.on("click", function () {
-      m.data.n += 1;
-      v.render();
-    });
-    c.ui.button2.on("click", function () {
-      m.data.n -= 1;
-      v.render();
-    });
-    c.ui.button3.on("click", function () {
-      m.data.n *= 1;
-      v.render();
-    });
-    c.ui.button4.on("click", function () {
-      m.data.n /= 1;
-      v.render();
-    });
+  events: {
+    "click #add1": "add",
+    "click #minus1": "minus",
+    "click #mul2": "mul",
+    "click #divede2": "div"
+  },
+  add: function add() {
+    m.data.n += 1;
+    v.render(m.data.n);
+  },
+  minus: function minus() {
+    m.data.n -= 1;
+    v.render(m.data.n);
+  },
+  mul: function mul() {
+    m.data.n *= 2;
+    v.render(m.data.n);
+  },
+  div: function div() {
+    m.data.n /= 2;
+    v.render(m.data.n);
+  },
+  autoBindEvent: function autoBindEvent() {
+    for (var key in c.events) {
+      var value = c[c.events[key]];
+      var spaceIndex = key.indexOf(" ");
+      var part1 = key.slice(0, spaceIndex);
+      var part2 = key.slice(spaceIndex + 1);
+      v.el.on(part1, part2, value);
+    }
   }
 };
-c.init();
 var _default = c;
 exports.default = _default;
 },{"jquery":"../node_modules/jquery/dist/jquery.js","./app1.css":"app1.css"}],"app2.css":[function(require,module,exports) {
@@ -11477,7 +11480,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "14503" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "10057" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

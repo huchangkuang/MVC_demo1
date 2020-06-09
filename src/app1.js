@@ -7,7 +7,7 @@ const m = {
     }
 }
 const v = {
-    el:null,
+    el: null,
     html: `
         <div>
         <div class="output"><span id="number">{{n}}</span></div>
@@ -19,49 +19,52 @@ const v = {
         </div>
         </div>
 `,
-    update() {
-        c.ui.number.text(m.data.n || 100)
+    init(container) {
+        v.el = $(container)
+        v.render()
     },
-    render(container) {
-        if (v.el === null){
-            v.el = $(v.html.replace("{{n}}",m.data.n)).appendTo($(container))
-        }else{
-            const newEl = $(v.html.replace('{{n}}',m.data.n))
-            v.el.replaceWith(newEl)
-            v.el = newEl
+    render(n) {
+        if (v.el.children.length !== 0){
+            v.el.empty()
+            $(v.html.replace("{{n}}",n)).appendTo(v.el)
         }
     }
 }
 const c = {
     init(container) {
-        v.render(container)
-        c.ui = {
-            button1: $("#add1"),
-            button2: $("#minus1"),
-            button3: $("#mul2"),
-            button4: $("#divide2"),
-            number: $("#number")
-        }
-        c.bindEvent()
+        v.init(container)
+        c.autoBindEvent()
     },
-    bindEvent() {
-        c.ui.button1.on("click", () => {
-            m.data.n += 1
-            v.render()
-        })
-        c.ui.button2.on("click", () => {
-            m.data.n -= 1
-            v.render()
-        })
-        c.ui.button3.on("click", () => {
-            m.data.n *= 1
-            v.render()
-        })
-        c.ui.button4.on("click", () => {
-            m.data.n /= 1
-            v.render()
-        })
-    }
+    events: {
+        "click #add1": "add",
+        "click #minus1": "minus",
+        "click #mul2": "mul",
+        "click #divede2": "div"
+    },
+    add() {
+        m.data.n += 1
+        v.render(m.data.n)
+    },
+    minus() {
+        m.data.n -= 1
+        v.render(m.data.n)
+    },
+    mul() {
+        m.data.n *= 2
+        v.render(m.data.n)
+    },
+    div() {
+        m.data.n /= 2
+        v.render(m.data.n)
+    },
+    autoBindEvent() {
+        for (let key in c.events) {
+            const value = c[c.events[key]]
+            const spaceIndex = key.indexOf(" ")
+            const part1 = key.slice(0, spaceIndex)
+            const part2 = key.slice(spaceIndex + 1)
+            v.el.on(part1, part2, value)
+        }
+    },
 }
-c.init()
 export default c
